@@ -68,17 +68,8 @@ MODEL_SPECS: dict[str, object] = {
 MODEL_PATHS = {name: MODEL_DIR / f"{name}.joblib" for name in MODEL_SPECS}
 
 
-# ============================================================
-# Function : ml_build_pipeline
-# Description :
-#   Wrap a classifier with the shared preprocessor in a Pipeline.
-# Inputs :
-#   estimator - unfitted sklearn classifier (or calibrated wrapper)
-# Outputs :
-#   Unfitted Pipeline with steps: preprocess, model
-# Notes :
-#   - Fresh preprocessor from build_preprocessor()
-# ============================================================
+# ml_build_pipeline
+# Wrap a classifier with the shared preprocessor in a Pipeline.
 def ml_build_pipeline(estimator) -> Pipeline:
     # print("WAS_DB:: ml_build_pipeline", type(estimator).__name__)
     return Pipeline(
@@ -89,19 +80,8 @@ def ml_build_pipeline(estimator) -> Pipeline:
     )
 
 
-# ============================================================
-# Function : ml_evaluate_pipeline
-# Description :
-#   Score a fitted pipeline on held-out features and labels.
-# Inputs :
-#   pipeline - fitted sklearn Pipeline
-#   x_test - held-out feature frame
-#   y_test - held-out target labels
-# Outputs :
-#   Dict of classification metrics
-# Notes :
-#   - Uses predict_proba when available for AUC
-# ============================================================
+# ml_evaluate_pipeline
+# Score a fitted pipeline on held-out features and labels.
 def ml_evaluate_pipeline(pipeline: Pipeline, x_test, y_test) -> dict[str, float]:
     y_pred = pipeline.predict(x_test)
     y_proba = None
@@ -113,18 +93,8 @@ def ml_evaluate_pipeline(pipeline: Pipeline, x_test, y_test) -> dict[str, float]
     return metrics
 
 
-# ============================================================
-# Function : ml_train_all_models
-# Description :
-#   Fit all classifiers on one stratified split and save joblibs.
-# Inputs :
-#   None (uses MODEL_SPECS / prepare_train_test)
-# Outputs :
-#   Dict mapping model key -> metrics dict; writes model/ artifacts
-# Notes :
-#   - Writes test_data.csv once from the shared split
-#   - Saves preprocessor from the first fitted pipeline
-# ============================================================
+# ml_train_all_models
+# Fit all classifiers on one stratified split and save joblibs.
 def ml_train_all_models() -> dict[str, dict[str, float]]:
     x_train, x_test, y_train, y_test = prepare_train_test()
     # print("WAS_DB:: ml_train_all_models", x_train.shape, x_test.shape)
@@ -155,17 +125,8 @@ def ml_train_all_models() -> dict[str, dict[str, float]]:
     return all_metrics
 
 
-# ============================================================
-# Function : ml_main
-# Description :
-#   Train all models and print the comparison table.
-# Inputs :
-#   None
-# Outputs :
-#   None (prints metrics table and markdown to stdout)
-# Notes :
-#   - Script entrypoint
-# ============================================================
+# ml_main
+# Train all models and print the comparison table.
 def ml_main() -> None:
     print("Training classifiers")
     all_metrics = ml_train_all_models()

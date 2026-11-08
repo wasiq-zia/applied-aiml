@@ -67,13 +67,8 @@ RANDOM_STATE = 42
 TEST_SIZE = 0.2
 
 
-# ============================================================
-# Function : download_raw_data
-# Description :
-#   Download the dataset archive and extract the raw CSV.
-# Outputs :
-#   Path to the raw CSV
-# ============================================================
+# download_raw_data
+# Download the dataset archive and extract the raw CSV.
 def download_raw_data(force: bool = False) -> Path:
     # print("WAS_DB:: download_raw_data", force, RAW_CSV_PATH.exists())
     if RAW_CSV_PATH.exists() and not force:
@@ -103,13 +98,8 @@ def download_raw_data(force: bool = False) -> Path:
     return RAW_CSV_PATH
 
 
-# ============================================================
-# Function : load_raw_data
-# Description :
-#   Load the raw CSV (semicolon-separated).
-# Outputs :
-#   DataFrame with features and target
-# ============================================================
+# load_raw_data
+# Load the raw CSV (semicolon-separated).
 def load_raw_data(csv_path: Path | None = None) -> pd.DataFrame:
     if csv_path is not None:
         path = csv_path
@@ -131,13 +121,8 @@ def load_raw_data(csv_path: Path | None = None) -> pd.DataFrame:
     return frame
 
 
-# ============================================================
-# Function : split_features_target
-# Description :
-#   Split a frame into features and binary target.
-# Outputs :
-#   (feature DataFrame, target Series; 1=yes, 0=no)
-# ============================================================
+# split_features_target
+# Split a frame into features and binary target.
 def split_features_target(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
     features = frame[FEATURE_COLUMNS].copy()
     target = frame[TARGET_COLUMN].map({"yes": 1, "no": 0}).astype(int)
@@ -147,13 +132,8 @@ def split_features_target(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]
     return features, target
 
 
-# ============================================================
-# Function : build_preprocessor
-# Description :
-#   Scale numerics and one-hot encode categoricals.
-# Outputs :
-#   Unfitted ColumnTransformer
-# ============================================================
+# build_preprocessor
+# Scale numerics and one-hot encode categoricals.
 def build_preprocessor() -> ColumnTransformer:
     # print("WAS_DB:: build_preprocessor", len(NUMERIC_FEATURES), len(CATEGORICAL_FEATURES))
     return ColumnTransformer(
@@ -169,13 +149,8 @@ def build_preprocessor() -> ColumnTransformer:
     )
 
 
-# ============================================================
-# Function : prepare_train_test
-# Description :
-#   Stratified train/test split on features and target.
-# Outputs :
-#   (x_train, x_test, y_train, y_test)
-# ============================================================
+# prepare_train_test
+# Stratified train/test split on features and target.
 def prepare_train_test(
     test_size: float = TEST_SIZE,
     random_state: int = RANDOM_STATE,
@@ -193,13 +168,8 @@ def prepare_train_test(
     return x_train, x_test, y_train, y_test
 
 
-# ============================================================
-# Function : save_test_data
-# Description :
-#   Write held-out test CSV with features and yes/no labels.
-# Outputs :
-#   Path to the written CSV
-# ============================================================
+# save_test_data
+# Write held-out test CSV with features and yes/no labels.
 def save_test_data(x_test: pd.DataFrame, y_test: pd.Series, path: Path = TEST_DATA_PATH) -> Path:
     test_frame = x_test.copy()
     test_frame[TARGET_COLUMN] = y_test.map({1: "yes", 0: "no"})
@@ -208,13 +178,8 @@ def save_test_data(x_test: pd.DataFrame, y_test: pd.Series, path: Path = TEST_DA
     return path
 
 
-# ============================================================
-# Function : save_preprocessor
-# Description :
-#   Persist a fitted preprocessor under model/.
-# Outputs :
-#   Path to the written .joblib file
-# ============================================================
+# save_preprocessor
+# Persist a fitted preprocessor under model/.
 def save_preprocessor(preprocessor: ColumnTransformer, path: Path = PREPROCESSOR_PATH) -> Path:
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
     joblib.dump(preprocessor, path)
@@ -222,13 +187,8 @@ def save_preprocessor(preprocessor: ColumnTransformer, path: Path = PREPROCESSOR
     return path
 
 
-# ============================================================
-# Function : run_prepare
-# Description :
-#   Fit preprocessor on train split; write test CSV and artifact.
-# Outputs :
-#   Summary dict (sizes, balances, paths)
-# ============================================================
+# run_prepare
+# Fit preprocessor on train split; write test CSV and artifact.
 def run_prepare() -> dict:
     x_train, x_test, y_train, y_test = prepare_train_test()
 
@@ -262,13 +222,8 @@ def run_prepare() -> dict:
     return summary
 
 
-# ============================================================
-# Function : main
-# Description :
-#   Run prepare and print a short summary.
-# Outputs :
-#   None
-# ============================================================
+# main
+# Run prepare and print a short summary.
 def main() -> None:
     summary = run_prepare()
     # print("WAS_DB:: main", summary["n_train"], summary["n_test"])

@@ -43,13 +43,8 @@ MODEL_DISPLAY_NAMES = {
 }
 
 
-# ============================================================
-# Function : compute_classification_metrics
-# Description :
-#   Compute Accuracy, AUC, Precision, Recall, F1, and MCC.
-# Outputs :
-#   Dict of metric name -> float (AUC may be nan)
-# ============================================================
+# compute_classification_metrics
+# Compute Accuracy, AUC, Precision, Recall, F1, and MCC.
 def compute_classification_metrics(
     y_true,
     y_pred,
@@ -80,13 +75,8 @@ def compute_classification_metrics(
     return metrics
 
 
-# ============================================================
-# Function : confusion_matrix_report
-# Description :
-#   Build a confusion matrix and text classification report.
-# Outputs :
-#   Dict with confusion_matrix and classification_report
-# ============================================================
+# confusion_matrix_report
+# Build a confusion matrix and text classification report.
 def confusion_matrix_report(y_true, y_pred) -> dict[str, Any]:
     report = {
         "confusion_matrix": confusion_matrix(y_true, y_pred),
@@ -101,13 +91,8 @@ def confusion_matrix_report(y_true, y_pred) -> dict[str, Any]:
     return report
 
 
-# ============================================================
-# Function : format_metrics
-# Description :
-#   Format a metrics dict as aligned text lines.
-# Outputs :
-#   Multi-line string
-# ============================================================
+# format_metrics
+# Format a metrics dict as aligned text lines.
 def format_metrics(metrics: dict[str, float]) -> str:
     lines = []
     for name in METRIC_COLUMNS:
@@ -117,13 +102,8 @@ def format_metrics(metrics: dict[str, float]) -> str:
     return "\n".join(lines)
 
 
-# ============================================================
-# Function : build_comparison_table
-# Description :
-#   Build a one-row-per-model comparison table.
-# Outputs :
-#   DataFrame with model name and metric columns
-# ============================================================
+# build_comparison_table
+# Build a one-row-per-model comparison table.
 def build_comparison_table(all_metrics: dict[str, dict[str, float]]) -> pd.DataFrame:
     rows = []
     for model_key, display_name in MODEL_DISPLAY_NAMES.items():
@@ -138,13 +118,8 @@ def build_comparison_table(all_metrics: dict[str, dict[str, float]]) -> pd.DataF
     return table
 
 
-# ============================================================
-# Function : format_comparison_markdown
-# Description :
-#   Render the comparison table as a markdown table.
-# Outputs :
-#   Markdown table string
-# ============================================================
+# format_comparison_markdown
+# Render the comparison table as a markdown table.
 def format_comparison_markdown(table: pd.DataFrame, decimals: int = 4) -> str:
     formatted = table.copy()
     for metric_name in METRIC_COLUMNS:
@@ -162,13 +137,8 @@ def format_comparison_markdown(table: pd.DataFrame, decimals: int = 4) -> str:
     return text
 
 
-# ============================================================
-# Function : collect_metrics_from_saved_models
-# Description :
-#   Load saved pipelines and test CSV; build the comparison table.
-# Outputs :
-#   Comparison DataFrame
-# ============================================================
+# collect_metrics_from_saved_models
+# Load saved pipelines and test CSV; build the comparison table.
 def collect_metrics_from_saved_models(
     test_data_path=TEST_DATA_PATH,
     model_dir=MODEL_DIR,
@@ -192,13 +162,8 @@ def collect_metrics_from_saved_models(
     return build_comparison_table(all_metrics)
 
 
-# ============================================================
-# Function : main
-# Description :
-#   CLI entry: print comparison metrics from saved models.
-# Outputs :
-#   None
-# ============================================================
+# main
+# CLI entry: print comparison metrics from saved models.
 def main() -> None:
     print("Comparing saved models")
     table = collect_metrics_from_saved_models()

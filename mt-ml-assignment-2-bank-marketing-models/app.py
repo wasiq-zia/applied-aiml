@@ -72,24 +72,14 @@ APP_CSS = """
 """
 
 
-# ============================================================
-# Function : apply_theme
-# Description :
-#   Inject lightweight CSS for a clean analytics look.
-# Outputs :
-#   None
-# ============================================================
+# apply_theme
+# Inject lightweight CSS for a clean analytics look.
 def apply_theme() -> None:
     st.markdown(APP_CSS, unsafe_allow_html=True)
 
 
-# ============================================================
-# Function : available_models
-# Description :
-#   List saved models that exist on disk.
-# Outputs :
-#   Dict of display name -> joblib Path
-# ============================================================
+# available_models
+# List saved models that exist on disk.
 def available_models() -> dict[str, Path]:
     found = {}
     for key, display_name in MODEL_DISPLAY_NAMES.items():
@@ -100,26 +90,16 @@ def available_models() -> dict[str, Path]:
     return found
 
 
-# ============================================================
-# Function : load_pipeline
-# Description :
-#   Load a saved Pipeline from disk (cached across reruns).
-# Outputs :
-#   Fitted Pipeline
-# ============================================================
+# load_pipeline
+# Load a saved Pipeline from disk (cached across reruns).
 @st.cache_resource
 def load_pipeline(model_path_str: str):
     # print("WAS_DB:: load_pipeline", model_path_str)
     return joblib.load(model_path_str)
 
 
-# ============================================================
-# Function : normalize_target
-# Description :
-#   Map yes/no or 0/1 labels to binary integers.
-# Outputs :
-#   Series of 0/1 ints
-# ============================================================
+# normalize_target
+# Map yes/no or 0/1 labels to binary integers.
 def normalize_target(series: pd.Series) -> pd.Series:
     # print("WAS_DB:: normalize_target in", series.astype(str).str.lower().unique()[:8].tolist())
     if pd.api.types.is_numeric_dtype(series):
@@ -138,13 +118,8 @@ def normalize_target(series: pd.Series) -> pd.Series:
     return mapped.astype(int)
 
 
-# ============================================================
-# Function : validate_uploaded_frame
-# Description :
-#   Check required columns and split features / target.
-# Outputs :
-#   (feature DataFrame, binary target Series)
-# ============================================================
+# validate_uploaded_frame
+# Check required columns and split features / target.
 def validate_uploaded_frame(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
     # print("WAS_DB:: validate_uploaded_frame", frame.shape)
     missing = [col for col in FEATURE_COLUMNS + [TARGET_COLUMN] if col not in frame.columns]
@@ -160,13 +135,8 @@ def validate_uploaded_frame(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.Serie
     return features, target
 
 
-# ============================================================
-# Function : score_pipeline
-# Description :
-#   Predict and compute metrics plus a confusion report (no fit).
-# Outputs :
-#   Dict with metrics, y_pred, and report
-# ============================================================
+# score_pipeline
+# Predict and compute metrics plus a confusion report (no fit).
 def score_pipeline(pipeline, x_test: pd.DataFrame, y_test: pd.Series) -> dict:
     y_pred = pipeline.predict(x_test)
     y_proba = pipeline.predict_proba(x_test) if hasattr(pipeline, "predict_proba") else None
@@ -176,13 +146,8 @@ def score_pipeline(pipeline, x_test: pd.DataFrame, y_test: pd.Series) -> dict:
     return {"metrics": metrics, "y_pred": y_pred, "report": report}
 
 
-# ============================================================
-# Function : schema_table
-# Description :
-#   Build a small expected-schema table for the empty state.
-# Outputs :
-#   DataFrame with Feature and Role columns
-# ============================================================
+# schema_table
+# Build a small expected-schema table for the empty state.
 def schema_table() -> pd.DataFrame:
     rows = [{"Feature": col, "Role": "numeric input"} for col in NUMERIC_FEATURES]
     rows.extend({"Feature": col, "Role": "categorical input"} for col in CATEGORICAL_FEATURES)
@@ -190,13 +155,8 @@ def schema_table() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-# ============================================================
-# Function : classification_report_frame
-# Description :
-#   Convert sklearn classification report dict to a tidy table.
-# Outputs :
-#   DataFrame of precision / recall / f1 / support by label
-# ============================================================
+# classification_report_frame
+# Convert sklearn classification report dict to a tidy table.
 def classification_report_frame(y_true, y_pred) -> pd.DataFrame:
     report = classification_report(
         y_true,
@@ -233,13 +193,8 @@ def classification_report_frame(y_true, y_pred) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-# ============================================================
-# Function : render_confusion_matrix
-# Description :
-#   Plot a confusion-matrix heatmap in the Streamlit page.
-# Outputs :
-#   None (st.pyplot)
-# ============================================================
+# render_confusion_matrix
+# Plot a confusion-matrix heatmap in the Streamlit page.
 def render_confusion_matrix(matrix) -> None:
     # print("WAS_DB:: render_confusion_matrix", getattr(matrix, "shape", None))
     fig, ax = plt.subplots(figsize=(5.2, 4.2))
@@ -266,13 +221,8 @@ def render_confusion_matrix(matrix) -> None:
     plt.close(fig)
 
 
-# ============================================================
-# Function : render_metric_grid
-# Description :
-#   Show classification metrics in two rows of three.
-# Outputs :
-#   None
-# ============================================================
+# render_metric_grid
+# Show classification metrics in two rows of three.
 def render_metric_grid(metrics: dict[str, float]) -> None:
     row1 = METRIC_COLUMNS[:3]
     row2 = METRIC_COLUMNS[3:]
@@ -286,27 +236,16 @@ def render_metric_grid(metrics: dict[str, float]) -> None:
         column.metric(name, "—" if pd.isna(value) else f"{value:.4f}")
 
 
-# ============================================================
-# Function : highlight_selected_model
-# Description :
-#   Style helper: highlight the selected model row in comparison.
-# Outputs :
-#   CSS string list for pandas Styler
-# ============================================================
+# highlight_selected_model
+# Style helper: highlight the selected model row in comparison.
 def highlight_selected_model(row: pd.Series, selected_name: str) -> list[str]:
     if row.get("ML Model Name") == selected_name:
         return ["background-color: #E8F1FB; color: #111111;"] * len(row)
     return [""] * len(row)
 
 
-# ============================================================
-# Function : main
-# Description :
-#   Streamlit entry: upload CSV, pick a model, show metrics and
-#   optional all-model comparison.
-# Outputs :
-#   None
-# ============================================================
+# main
+# Streamlit entry: upload CSV, pick a model, show metrics and optional all-model comparison.
 def main() -> None:
     apply_theme()
 

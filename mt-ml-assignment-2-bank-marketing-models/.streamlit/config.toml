@@ -1,0 +1,15 @@
+[theme]
+# A clean, crisp white background for maximum text contrast
+backgroundColor = "#FFFFFF"
+
+# A slightly muted light gray for sidebars or card widgets to structure the page
+secondaryBackgroundColor = "#F0F2F6"
+
+# Deep charcoal/black for text so it stands out sharply
+textColor = "#111111"
+
+# A vibrant, professional blue for buttons, sliders, and highlights
+primaryColor = "#0066CC"
+
+# Standard font style
+font = "sans serif"

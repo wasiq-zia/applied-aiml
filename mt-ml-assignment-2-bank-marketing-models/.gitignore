@@ -1,0 +1,22 @@
+# Local / large training data (committed artifact is test_data.csv)
+data/
+bank-full.csv
+bank.csv
+*.zip
+
+# Assignment brief (do not push)
+ML_Assignment_2_AIML_26Oct26.pdf
+*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
